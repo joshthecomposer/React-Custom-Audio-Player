@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react'
 import axios from 'axios'
+import { FaPlayCircle, FaPauseCircle } from 'react-icons/fa'
+import {BsFillSkipEndFill, BsFillSkipStartFill} from 'react-icons/bs'
 import AudioContainerSm from './AudioContainerSm'
 
 const AudioPlayer = (props) => {
     const { audioObjectArray, currentPlayState, setCurrentPlayState, img, setImg, masterAudio, dangerousHTML, setDangerousHTML } = props;
 
-    const handleGranularPlayback = (index, oneAudio) => {
+    //This allows the user to play/pause and select other tracks within the tracklist
+    const handleGranularPlayback = (index, oneAudio) => { //TODO: REFACTOR THIS FUNCTION.
         if (currentPlayState.isPlaying) {
             console.log(currentPlayState);
             if (currentPlayState.idx === index) {
@@ -35,11 +38,77 @@ const AudioPlayer = (props) => {
             masterAudio.current.play();
         }
     }
+    //TODO: REFACTOR BOTH PLAYBACK FUNCTIONS TO BE MORE CONCISE AND HANDLE EVERYTING IN ONE FUNCTION.
+    const handleMasterPlayback = () => {
+        if (!currentPlayState.isInit) {
+            masterAudio.current.pause()
+            setCurrentPlayState({ ...currentPlayState, idx: 0, isInit: true, isPlaying:true });
+            masterAudio.current = new Audio(audioObjectArray[0].links[0].href) //TODO: Check if this can ref oneAudio
+            masterAudio.current.play();
+        } else {
+            if (currentPlayState.isPlaying) {
+                masterAudio.current.pause();
+                setCurrentPlayState({...currentPlayState, isPlaying:false})
+            } else {
+                masterAudio.current.play();
+                setCurrentPlayState({...currentPlayState, isPlaying:true})
+            }
+        }
+    }
+
+    const handleSkip = (input) => {
+        if (!currentPlayState.isInit) {
+            handleMasterPlayback();
+            return;
+        }
+        if ((currentPlayState.idx + input) > (audioObjectArray.length - 1)) {
+            masterAudio.current.pause();
+            setCurrentPlayState({ ...currentPlayState, idx: 0, isPlaying: true })
+            masterAudio.current = new Audio(audioObjectArray[0].links[0].href)
+            masterAudio.current.play();
+            return;
+        } else if ((currentPlayState.idx + input) < 0) {
+            masterAudio.current.pause();
+            setCurrentPlayState({ ...currentPlayState, idx: audioObjectArray.length-1, isPlaying: true })
+            masterAudio.current = new Audio(audioObjectArray[audioObjectArray.length-1].links[0].href)
+            masterAudio.current.play();
+            return
+        }
+        masterAudio.current.pause();
+        setCurrentPlayState({ ...currentPlayState, idx: currentPlayState.idx + input, isPlaying: true });
+        masterAudio.current = new Audio(audioObjectArray[currentPlayState.idx+input].links[0].href)
+        masterAudio.current.play();
+    }
 
     return (
-        <div className='flex items-center flex-col w-full md:w-1/2 bg-mines-900 relative'>
+        <div className='flex items-center flex-col w-full xl:w-1/2 md:w-2/3 bg-mines-900 relative rounded-lg overflow-hidden shadow-lg'>
             <div className='flex w-full h-[250px] relative'>
-                <img src={img} className='w-[250px] rounded-lg' alt="" />
+                <img src={img} className='w-[250px]' alt="" />
+                <div className="flex flex-col w-full">
+                    <div className="w-full h-1/2 bg-red-500"></div>
+                    <div className="w-full h-1/2 flex justify-center items-center gap-10 py-">
+                        <BsFillSkipStartFill
+                            className="text-neutral-200 hover:cursor-pointer hover:text-white"
+                            onClick={() => handleSkip(-1)}
+                            size="50px" />
+                        {
+                            currentPlayState.isPlaying ?
+                                <FaPauseCircle
+                                    onClick={handleMasterPlayback}
+                                    size="100px"
+                                    className='text-neutral-200 hover:cursor-pointer hover:text-white' />
+                                :
+                                <FaPlayCircle
+                                    onClick={handleMasterPlayback}
+                                    size="100px"
+                                    className="text-neutral-200 hover:cursor-pointer hover:text-white" />
+                        }
+                        <BsFillSkipEndFill
+                            className="text-neutral-200 hover:cursor-pointer hover:text-white"
+                            onClick={() => handleSkip(1)}
+                            size="50px" />
+                    </div>
+                </div>
             </div>
             <div
                 className='flex flex-col w-full'
