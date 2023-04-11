@@ -4,7 +4,7 @@ import './App.css'
 
 function App() {
     return (
-        <div className='bg-mines-950 w-full flex flex-col justify-center items-center py-20'>
+        <div className='w-full flex flex-col justify-center items-center py-20'>
             <Episodes />
         </div>
   )

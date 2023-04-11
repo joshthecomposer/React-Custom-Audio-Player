@@ -26,6 +26,7 @@ const AudioContainerSm = (props) => {
         e.stopPropagation();
         if (currentPlayState.summaryIdx === index) {
             setCurrentPlayState({ ...currentPlayState, isSummaryShowing: !currentPlayState.isSummaryShowing });
+            setDangerousHTML({__html: audioObjectArray[index].summary})
         } else {
             setCurrentPlayState({ ...currentPlayState, isSummaryShowing: true, summaryIdx: index });
             setDangerousHTML({__html: audioObjectArray[index].summary})
