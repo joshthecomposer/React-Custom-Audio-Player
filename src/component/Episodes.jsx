@@ -23,7 +23,7 @@ const Episodes = () => {
         axios.get("http://localhost:5000/api/episodes")
             .then(res => {
                 setAudioObjectArray(res.data);
-                setDangerousHTML({__html: res.data[0].summary});
+                setDangerousHTML({ __html: res.data[0].summary });
             })
             .catch(err => console.log(err));
     }, []);

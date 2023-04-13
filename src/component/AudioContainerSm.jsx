@@ -11,7 +11,9 @@ const AudioContainerSm = (props) => {
         currentPlayState,
         setCurrentPlayState,
         setDangerousHTML,
-        audioObjectArray } = props;
+        audioObjectArray,
+        masterAudio,
+        handleVisualiser} = props;
 
     const [oneTitle, setOneTitle] = useState("");
 
@@ -46,11 +48,12 @@ const AudioContainerSm = (props) => {
     return (
         <>
             <div
-                onClick={() => { updateImg(oneAudioFromArray.image.href), handleGranularPlayback(idx, oneAudioFromArray) }}
+                onClick={() => { updateImg(oneAudioFromArray.image.href), handleGranularPlayback(idx, oneAudioFromArray), handleVisualiser() }}
                 className="bg-mines-800 text-neutral-300 flex gap-2 items-center justify-between px-8 py-4 hover:cursor-pointer hover:bg-mines-400 hover:text-mines-800"
                 style={currentPlayState.idx === idx ? bg : null}>
                 <p className='tracking-normal font-medium'> {oneTitle}</p>
-                <CgNotes onClick={(e)=>showInfoHandler(e, idx)} className="hover:scale-[150%]" />
+                <CgNotes onClick={(e) => showInfoHandler(e, idx)} className="hover:scale-[150%]" />
+                {/* <audio ref={masterAudio} onPlay={handleVisualiser}></audio> */}
             </div>
         </>
     )

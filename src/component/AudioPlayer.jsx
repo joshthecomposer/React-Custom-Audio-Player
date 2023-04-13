@@ -9,57 +9,50 @@ const AudioPlayer = (props) => {
 
     const canvasRef = useRef() //TODO: Make this be the canvas that is in the audioplayer component
 
-    const drawAudioVisualiser = (ctx, canvas) => {
+    // const drawAudioVisualiser = () => {
 
-        var audio = new Audio("./victory.wav")
+    //     masterAudioSource.current = masterAudio.current;
+    //     masterAnalyser.current = masterAudioSource.createAnalyser();
 
-        var context = new AudioContext();
-        var src = context.createMediaElementSource(audio);
-        var analyser = context.createAnalyser();
+    //     masterAnalyser.fftSize = 1024;
 
-        src.connect(analyser);
-        analyser.connect(context.destination);
+    //     let bufferLength = masterAnalyser.frequencyBinCount;
+    //     let dataArray = new Uint8Array(bufferLength);
 
-        analyser.fftSize = 1024;
+    //     let WIDTH = masterCanvas.width;
+    //     let HEIGHT = masterCanvas.height;
 
-        var bufferLength = analyser.frequencyBinCount;
-        var dataArray = new Uint8Array(bufferLength);
+    //     let barWidth = (WIDTH / bufferLength) * 1;
+    //     let barHeight;
+    //     let x = 0;
 
-        var WIDTH = canvas.width;
-        var HEIGHT = canvas.height;
+    //     const renderFrame = () => {
+    //         requestAnimationFrame(renderFrame)
 
-        var barWidth = (WIDTH / bufferLength) * 1;
-        var barHeight;
-        var x = 0;
+    //         x = 0;
 
-        const renderFrame = () => {
-            requestAnimationFrame(renderFrame)
+    //         masterAnalyser.getByteFrequencyData(dataArray);
+    //         masterAudioContext.clearRect(0, 0, WIDTH, HEIGHT);
 
-            x = 0;
+    //         for (let i = 0; i < bufferLength; i++) {
+    //             barHeight = dataArray[i] / 2;
 
-            analyser.getByteFrequencyData(dataArray);
-            ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    //             let r = 255;
+    //             let g = 255;
+    //             let b = 255;
 
-            for (let i = 0; i < bufferLength; i++) {
-                barHeight = dataArray[i] / 2;
+    //             masterAudioContext.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+    //             masterAudioContext.fillRect(x, HEIGHT - barHeight, barWidth * 3, barHeight)
 
-                var r = 255;
-                var g = 255;
-                var b = 255;
-
-                ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
-                ctx.fillRect(x, HEIGHT - barHeight, barWidth * 3, barHeight)
-
-                x += barWidth + 1;
-            }
-        }
-        renderFrame();
-    }
+    //             x += barWidth + 1;
+    //         }
+    //     }
+    //     renderFrame();
+    // }
 
     //This allows the user to play/pause and select other tracks within the tracklist
     const handleGranularPlayback = (index, oneAudio) => { //TODO: REFACTOR THIS FUNCTION.
         if (currentPlayState.isPlaying) {
-            console.log(currentPlayState);
             if (currentPlayState.idx === index) {
                 masterAudio.current.pause();
                 setCurrentPlayState({ ...currentPlayState, isPlaying: false });
@@ -90,7 +83,6 @@ const AudioPlayer = (props) => {
     //TODO: REFACTOR BOTH PLAYBACK FUNCTIONS TO BE MORE CONCISE AND HANDLE EVERYTING IN ONE FUNCTION.
     const handleMasterPlayback = () => {
         if (!currentPlayState.isInit) {
-            masterAudio.current.pause()
             setCurrentPlayState({ ...currentPlayState, idx: 0, isInit: true, isPlaying:true });
             masterAudio.current = new Audio(audioObjectArray[0].links[0].href) //TODO: Check if this can ref oneAudio
             masterAudio.current.play();
@@ -129,13 +121,50 @@ const AudioPlayer = (props) => {
         masterAudio.current.play();
     }
 
-    useEffect(() => {
-        const canvas = canvasRef.current
-        const ctx = canvas.getContext('2d')
+    // const handleVisualiser = () => {
+    //     masterAudio.current.crossOrigin = "anonymous"
+    //     console.log("We made it into HandleVisualiser function.")
+    //     const audioContext = new AudioContext();
+    //     const source = audioContext.createMediaElementSource(masterAudio.current);
+    //     const analyser = audioContext.createAnalyser();
+    //     source.connect(analyser);
+    //     analyser.connect(audioContext.destination);
 
-        //Our draw come here
-        drawAudioVisualiser(ctx, canvas)
-    }, [drawAudioVisualiser])
+    //     const canvas = canvasRef.current;
+
+    //     const draw = () => {
+    //         const dataArray = new Uint8Array(analyser.frequencyBinCount);
+    //         analyser.getByteFrequencyData(dataArray);
+            
+    //         const canvas = canvasRef.current;
+    //         const ctx = canvas.getContext('2d');
+            
+    //         ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //         ctx.fillStyle = 'rgb(255, 255, 255)';
+    //         ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+    //         const barWidth = (canvas.width / dataArray.length) * 2.5;
+    //         let x = 0;
+
+    //         for (let i = 0; i < dataArray.length; i++) {
+    //           const barHeight = (dataArray[i] / 255) * canvas.height * 0.5;
+    //           ctx.fillStyle = `rgb(${barHeight + 100},50,50)`;
+    //           ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+    //           x += barWidth + 1;
+    //         }
+            
+    //         requestAnimationFrame(draw);
+    //     };
+    // };
+
+    // useEffect(() => {
+    //     if (masterAudio.current) {
+    //         const audio = masterAudio.current;
+    //         audio.addEventListener('play', () => {
+    //             console.log("audio is playing...")
+    //         })
+    //     }
+    // },[masterAudio])
 
     return (
         <div className='flex items-center flex-col w-full xl:w-1/2 md:w-2/3 bg-mines-900 relative rounded-lg overflow-hidden shadow-lg'>
@@ -143,7 +172,7 @@ const AudioPlayer = (props) => {
                 <img src={img} className='w-[250px]' alt="" />
                 <div className="flex flex-col w-full">
                     <div className="w-full h-1/2">
-                        <canvas ref={canvasRef} className="w-full h-full bg-red-500" />
+                        <canvas ref={canvasRef} className="w-full h-full" />
                     </div>
                     <div className="w-full h-1/2 flex justify-center items-center gap-10 py-">
                         <BsFillSkipStartFill
@@ -183,7 +212,7 @@ const AudioPlayer = (props) => {
                     {
                         audioObjectArray.map((a, i) => (
                             <div key={i}>
-                                <AudioContainerSm setImg={setImg} handleGranularPlayback={handleGranularPlayback} masterAudio={masterAudio} oneAudioFromArray={a} idx={i} currentPlayState={currentPlayState} setCurrentPlayState={setCurrentPlayState} setDangerousHTML={setDangerousHTML} audioObjectArray={ audioObjectArray } />
+                                <AudioContainerSm setImg={setImg} handleGranularPlayback={handleGranularPlayback} masterAudio={masterAudio} oneAudioFromArray={a} idx={i} currentPlayState={currentPlayState} setCurrentPlayState={setCurrentPlayState} setDangerousHTML={setDangerousHTML} audioObjectArray={ audioObjectArray } handleVisualiser={handleVisualiser} />
                             </div>
                         ))
                     }
