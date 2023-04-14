@@ -1,13 +1,20 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import axios from 'axios'
 import { FaPlayCircle, FaPauseCircle } from 'react-icons/fa'
-import { IoClose } from 'react-icons/io'
+import { IoMdClose } from 'react-icons/io'
 import {BsFillSkipEndFill, BsFillSkipStartFill} from 'react-icons/bs'
 import AudioContainerSm from './AudioContainerSm'
 
 const AudioPlayer = (props) => {
     const [currentTime, setCurrentTime] = useState(0);
     const { audioObjectArray, currentPlayState, setCurrentPlayState, img, setImg, masterAudio, dangerousHTML, setDangerousHTML } = props;
+    const [currentSeconds, setCurrentSeconds] = useState(0);
+    const [currentMinutes, setCurrentMinutes] = useState(0);
+    const [currentHours, setCurrentHours] = useState(0);
+
+    const [currentMaxSeconds, setCurrentMaxSeconds] = useState(0);
+    const [currentMaxMinutes, setCurrentMaxMinutes] = useState(0);
+    const [currentMaxHours, setCurrentMaxHours] = useState(0);
 
     //This allows the user to play/pause and select other tracks within the tracklist
     const handleGranularPlayback = (index, oneAudio) => { //TODO: REFACTOR THIS FUNCTION.
@@ -92,9 +99,22 @@ const AudioPlayer = (props) => {
     useEffect(() => {
         const intervalId = setInterval(() => {
             setCurrentTime(masterAudio.current.currentTime);
+            setCurrentHours(Math.floor(currentTime/3600));
+            setCurrentMinutes(Math.floor((currentTime%3600)/60));
+            setCurrentSeconds(Math.floor(currentTime % 60));
         }, 100);
         return () => clearInterval(intervalId);
-    }, []);
+    }, [currentTime]);
+
+    useEffect(() => {
+        setCurrentMaxSeconds(Math.floor(masterAudio.current.duration % 60));
+        setCurrentMaxMinutes(Math.floor((masterAudio.current.duration %3600) / 60));
+        setCurrentMaxHours(Math.floor(masterAudio.current.duration/3600))
+    },[currentTime])
+
+    const hideInfoHandler = () => {
+        setCurrentPlayState({...currentPlayState, isSummaryShowing : false})
+    }
 
     return (
         <div className='flex items-center flex-col w-full xl:w-1/2 md:w-2/3 bg-mines-900 relative rounded-lg overflow-hidden shadow-lg'>
@@ -123,18 +143,50 @@ const AudioPlayer = (props) => {
                             onClick={() => handleSkip(1)}
                             size="50px" />
                     </div>
-                    <div className="slidercontainer static">
-                        <input className="slider absolute" type="range" min="0" value={currentTime} max={masterAudio.current.duration} onChange={handleSeek} />
+                    <div className="flex flex-col">
+                        <input className="slider" type="range" min="0" value={currentTime} max={masterAudio.current.duration} onChange={handleSeek} />
+                        <div className="flex justify-between px-2">
+                            <p className="font-medium text-[1.8rem] tracking-normal">
+                                {
+                                    currentHours < 10 ? <span>0{currentHours}</span> : <span>{currentHours}</span>
+                                }
+                                :
+                                {
+                                    currentMinutes < 10 ? <span>0{currentMinutes}</span> : <span>{currentMinutes}</span>
+                                }
+                                :
+                                {
+                                    currentSeconds < 10 ? <span>0{currentSeconds}</span> : <span>{currentSeconds}</span>
+                                }
+                            </p>
+                            <p className="font-medium text-[1.8rem] tracking-normal">
+                                {
+                                    !currentMaxHours ? <span>00</span> :
+                                    currentMaxHours < 10 ? <span>0{currentMaxHours}</span> : <span>{currentMaxHours}</span>
+                                }
+                                :
+                                {
+                                    !currentMaxMinutes ? <span>00</span>:
+                                    currentMaxMinutes < 10 ? <span>0{currentMaxMinutes}</span> : <span>{currentMaxMinutes}</span>
+                                }
+                                :
+                                {
+                                    !currentMaxSeconds ? <span>00</span> :
+                                    currentMaxSeconds < 10 ? <span>0{currentMaxSeconds}</span> : <span>{currentMaxSeconds}</span>
+                                }
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
             <div
                 className='flex flex-col w-full'
                 style={{flexDirection:currentPlayState.isSummaryShowing ? "row" : "column"}}>
-                    <div
-                    dangerouslySetInnerHTML={currentPlayState.isSummaryShowing ? dangerousHTML : null}
-                    className="px-20 py-20 w-full top-0 tracking-normal text-2xl max-h-[50rem] overflow-x-hidden"
+                <div
+                    className="flex relative flex-row px-20 py-20 w-full top-0 tracking-normal text-2xl max-h-[50rem] overflow-x-hidden"
                     style={{ width: currentPlayState.isSummaryShowing ? "50%" : "100%", display: currentPlayState.isSummaryShowing ? "block" : "none" }}>
+                    <div className="static" dangerouslySetInnerHTML={currentPlayState.isSummaryShowing ? dangerousHTML : null}></div>
+                    <IoMdClose className="absolute top-0 right-0 text-neutral-200 w-[25px] h-[25px] hover:cursor-pointer" onClick={hideInfoHandler} />
                 </div>
                 <div
                     className="w-full flex flex-col bg-mines-900 overflow-x-hidden overflow-y-scroll max-h-[50rem]"
