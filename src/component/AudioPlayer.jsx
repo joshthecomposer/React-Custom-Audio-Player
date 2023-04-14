@@ -144,7 +144,7 @@ const AudioPlayer = (props) => {
                             size="50px" />
                     </div>
                     <div className="flex flex-col">
-                        <input className="slider" type="range" min="0" value={currentTime} max={masterAudio.current.duration} onChange={handleSeek} />
+                        <input className="slider" type="range" min="0" value={currentTime} max={!masterAudio.current.duration ? 0 : masterAudio.current.duration} onChange={handleSeek} />
                         <div className="flex justify-between px-2">
                             <p className="font-ozzy font-normal text-[1.8rem] tracking-wider">
                                 {
