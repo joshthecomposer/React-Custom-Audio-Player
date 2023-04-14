@@ -146,7 +146,7 @@ const AudioPlayer = (props) => {
                     <div className="flex flex-col">
                         <input className="slider" type="range" min="0" value={currentTime} max={masterAudio.current.duration} onChange={handleSeek} />
                         <div className="flex justify-between px-2">
-                            <p className="font-medium text-[1.8rem] tracking-normal">
+                            <p className="font-ozzy font-normal text-[1.8rem] tracking-wider">
                                 {
                                     currentHours < 10 ? <span>0{currentHours}</span> : <span>{currentHours}</span>
                                 }
@@ -159,7 +159,7 @@ const AudioPlayer = (props) => {
                                     currentSeconds < 10 ? <span>0{currentSeconds}</span> : <span>{currentSeconds}</span>
                                 }
                             </p>
-                            <p className="font-medium text-[1.8rem] tracking-normal">
+                            <p className="font-ozzy font-normal text-[1.8rem] tracking-wider">
                                 {
                                     !currentMaxHours ? <span>00</span> :
                                     currentMaxHours < 10 ? <span>0{currentMaxHours}</span> : <span>{currentMaxHours}</span>

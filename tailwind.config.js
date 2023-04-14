@@ -6,6 +6,10 @@ export default {
       ],
   theme: {
       extend: {
+          fontFamily: {
+              ozzy: ["Oswald"],
+              rale: ["Raleway"]
+        },
           colors: {
                 'mines': {
                     DEFAULT: '#2D2D2D',
