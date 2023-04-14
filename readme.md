@@ -4,4 +4,4 @@ This is a custom audio player that I made in react which makes use of JavaScript
 
 I am currently implementing the audio visualiser functionality.  
 
-<img src='/public/audio-player.png' height='550'>
+<img src='/public/audio-player-2.png' height='550'>
